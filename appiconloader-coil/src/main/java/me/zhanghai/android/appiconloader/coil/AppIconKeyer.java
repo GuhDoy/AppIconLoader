@@ -4,8 +4,9 @@ import android.content.pm.PackageInfo;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import coil.key.Keyer;
-import coil.request.Options;
+
+import coil3.key.Keyer;
+import coil3.request.Options;
 import me.zhanghai.android.appiconloader.AppIconLoader;
 
 public class AppIconKeyer implements Keyer<PackageInfo> {

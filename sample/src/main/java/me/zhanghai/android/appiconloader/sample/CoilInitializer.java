@@ -20,9 +20,12 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 
 import androidx.annotation.NonNull;
-import coil.Coil;
-import coil.ComponentRegistry;
-import coil.ImageLoader;
+
+import coil3.ComponentRegistry;
+import coil3.ImageLoader;
+import coil3.SingletonImageLoader;
+import kotlin.jvm.JvmClassMappingKt;
+import kotlin.reflect.KClass;
 import me.zhanghai.android.appiconloader.coil.AppIconFetcher;
 import me.zhanghai.android.appiconloader.coil.AppIconKeyer;
 
@@ -40,13 +43,21 @@ public class CoilInitializer {
             }
             context = context.getApplicationContext();
             int iconSize = context.getResources().getDimensionPixelSize(R.dimen.app_icon_size);
-            Coil.setImageLoader(new ImageLoader.Builder(context)
-                    .components(new ComponentRegistry.Builder()
-                            .add(new AppIconKeyer(), PackageInfo.class)
-                            .add(new AppIconFetcher.Factory(iconSize, false, context),
-                                    PackageInfo.class)
-                            .build())
-                    .build());
+            SingletonImageLoader.setSafe(new SingletonImageLoader.Factory() {
+                @NonNull
+                @Override
+                public ImageLoader newImageLoader(@NonNull Context context) {
+                    KClass<PackageInfo> packageInfoKClass =
+                            JvmClassMappingKt.getKotlinClass(PackageInfo.class);
+                    return new ImageLoader.Builder(context)
+                            .components(new ComponentRegistry.Builder()
+                                    .add(new AppIconKeyer(), packageInfoKClass)
+                                    .add(new AppIconFetcher.Factory(iconSize, false, context),
+                                            packageInfoKClass)
+                                    .build())
+                            .build();
+                }
+            });
             sInitialized = true;
         }
     }

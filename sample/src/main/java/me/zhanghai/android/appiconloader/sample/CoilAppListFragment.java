@@ -21,9 +21,11 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import coil.Coil;
-import coil.ImageLoader;
-import coil.request.ImageRequest;
+
+import coil3.ImageLoader;
+import coil3.SingletonImageLoader;
+import coil3.request.ImageRequest;
+import coil3.target.ImageViewTarget;
 
 public class CoilAppListFragment extends AppListFragment {
     @NonNull
@@ -43,10 +45,10 @@ public class CoilAppListFragment extends AppListFragment {
     protected AppListAdapter.IconLoader onCreateIconLoader() {
         return (imageView, packageInfo) -> {
             Context context = imageView.getContext();
-            ImageLoader loader = Coil.imageLoader(context);
+            ImageLoader loader = SingletonImageLoader.get(context);
             loader.enqueue(new ImageRequest.Builder(context)
                     .data(packageInfo)
-                    .target(imageView)
+                    .target(new ImageViewTarget(imageView))
                     .build());
         };
     }

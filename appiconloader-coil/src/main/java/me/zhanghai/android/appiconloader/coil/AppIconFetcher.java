@@ -25,12 +25,14 @@ import android.graphics.drawable.BitmapDrawable;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.Px;
-import coil.ImageLoader;
-import coil.decode.DataSource;
-import coil.fetch.DrawableResult;
-import coil.fetch.FetchResult;
-import coil.fetch.Fetcher;
-import coil.request.Options;
+
+import coil3.ImageKt;
+import coil3.ImageLoader;
+import coil3.decode.DataSource;
+import coil3.fetch.FetchResult;
+import coil3.fetch.Fetcher;
+import coil3.fetch.ImageFetchResult;
+import coil3.request.Options;
 import kotlin.coroutines.Continuation;
 import me.zhanghai.android.appiconloader.AppIconLoader;
 
@@ -53,8 +55,10 @@ public class AppIconFetcher implements Fetcher {
     @Override
     public FetchResult fetch(@NonNull Continuation<? super FetchResult> continuation) {
         Bitmap icon = mLoader.loadIcon(mApplicationInfo);
-        return new DrawableResult(new BitmapDrawable(mOptions.getContext().getResources(), icon),
-                true, DataSource.DISK);
+        return new ImageFetchResult(
+                ImageKt.asCoilImage(new BitmapDrawable(mOptions.getContext().getResources(), icon)),
+                true,
+                DataSource.DISK);
     }
 
     public static class Factory implements Fetcher.Factory<PackageInfo> {
